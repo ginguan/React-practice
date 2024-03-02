@@ -1,3 +1,4 @@
+/* Global styles */
 .App {
   text-align: center;
 }
@@ -35,4 +36,24 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+body, h1, h2, h3, p {
+  margin: 20px;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  padding: 20px;
+}
+
+.job-board {
+  background-color: #f0f0f9;
+  padding: 20px;
+}
+
+.task-list {
+  background-color: #f9f0f0;
+  padding: 20px;
 }
