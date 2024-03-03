@@ -1,14 +1,12 @@
 import React, { useState, useEffect, FC } from 'react'
-import tasksData from './task.json'
 
 interface Task {
   id: number
   title: string
   description: string
-  priority?: string // Added priority attribute
+  priority?: string // Priority is optional
 }
 
-// Extend NewTask interface for the form
 interface NewTask {
   title: string
   description: string
@@ -17,14 +15,17 @@ interface NewTask {
 
 const TaskList: FC = () => {
   const [tasks, setTasks] = useState<Task[]>([])
-
   useEffect(() => {
-    // Assuming tasksData now includes priorities
-    setTasks(tasksData)
+    const savedTasks = localStorage.getItem('tasks')
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks))
+    }
   }, [])
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks))
+  }, [tasks])
 
   const [newTask, setNewTask] = useState<NewTask>({ title: '', description: '', priority: 'Normal' })
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setNewTask({ ...newTask, [name]: value })
@@ -33,29 +34,22 @@ const TaskList: FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const newId = tasks.length > 0 ? Math.max(...tasks.map(task => task.id)) + 1 : 1
-    setTasks([...tasks, { ...newTask, id: newId }])
-    setNewTask({ title: '', description: '', priority: 'Unknown' })
+    addTask({ ...newTask, id: newId })
+    setNewTask({ title: '', description: '', priority: 'Normal' }) // Reset form
   }
 
-  // Function to remove a task
-  const handleRemove = (id: number) => {
-    setTasks(tasks.filter(task => task.id !== id))
+  const addTask = (task: Task) => {
+    setTasks([...tasks, task])
+  }
+
+  const deleteTask = (taskId: number) => {
+    setTasks(tasks.filter(task => task.id !== taskId))
   }
 
   const updateTaskPriority = (id: number, newPriority: string) => {
-    // Create a new array of tasks with the updated priority for the specified task
-    const updatedTasks = tasks.map(task => {
-      if (task.id === id) {
-        // Found the task, update its priority
-        return { ...task, priority: newPriority }
-      }
-      // Return the task unchanged if it's not the one we're updating
-      return task
-    })
-    // Update the state with the new array of tasks
+    const updatedTasks = tasks.map(task => task.id === id ? { ...task, priority: newPriority } : task)
     setTasks(updatedTasks)
   }
-  
 
   return (
     <div className="task-list">
@@ -92,7 +86,7 @@ const TaskList: FC = () => {
             <h3>{task.title}</h3>
             <p>{task.description}</p>
             <p>
-              Priority:
+              Priority: 
               <select
                 value={task.priority}
                 onChange={(e) => updateTaskPriority(task.id, e.target.value)}
@@ -102,11 +96,10 @@ const TaskList: FC = () => {
                 <option value="Low">Low</option>
               </select>
             </p>
-            <button onClick={() => handleRemove(task.id)}>Remove Task</button>
+            <button onClick={() => deleteTask(task.id)}>Remove Task</button>
           </li>
         ))}
       </ul>
-
     </div>
   )
 }
