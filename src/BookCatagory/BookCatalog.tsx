@@ -10,22 +10,35 @@ import { BooksData, Book, Author } from './type'
 const BookCatalog = () => {
     const [books, setBooks] = useState<BooksData>(booksData) // All books
     const [displayedBooks, setDisplayedBooks] = useState<BooksData>(booksData) // Books to display, can be filtered
-    const [newBook, setNewBook] = useState<Book>({
-        id: '',
-        title: '',
-        author: { firstName: '', lastName: '' },
-        year: new Date().getFullYear()
-    })
+    // const [newBook, setNewBook] = useState<Book>({
+    //     id: '',
+    //     title: '',
+    //     author: { firstName: '', lastName: '' },
+    //     year: new Date().getFullYear()
+    // })
     const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
     const [filterYear, setFilterYear] = useState<number | null>(null) // Currently applied filter year
-
+    console.log('books', books)
     const handleAddBook = (newBook: { title: string, author: Author, year: number }) => {
-      const id = uuidv4() 
-      const updatedBooks:any = {
-        ...books,
-        [id]: newBook,
-      }
-      setBooks(updatedBooks)
+        const id = uuidv4()
+        const letter = newBook.author?.lastName[0].toUpperCase()
+        if (!books[letter]) {
+            const updatedBooks: any = {
+                ...books,
+                [letter]: [{ ...newBook, id: id }],
+            }
+            setBooks(updatedBooks)
+            setDisplayedBooks(updatedBooks)
+        }
+        else {
+            // books[letter].push({...newBook, id:id})
+            const updatedBooks: any = {
+                ...books,
+                [letter]: [...books[letter], { ...newBook, id: id }],
+            }
+            setBooks(updatedBooks)
+            setDisplayedBooks(updatedBooks)
+        }
     }
 
     const handleFilterApply = () => {
@@ -47,7 +60,9 @@ const BookCatalog = () => {
     }
 
     // Collect all unique years from the books data for the YearFilter component
-    const availableYears = Array.from(new Set(Object.values(books).flatMap(letterGroup => letterGroup.map(book => book.year))))
+    const availableYears = Array.from(new Set(Object.values(books).flatMap(letterGroup => {
+        return letterGroup?.map(item => item.year)
+    })))
 
     return (
         <div className="book-catalog">
