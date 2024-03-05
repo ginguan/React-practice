@@ -2,23 +2,10 @@ import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import booksData from './bookData.json'
 import YearFilter from './YearFilter' // Import the YearFilter component
-// BookCatalog.tsx
+import AddNewBook from './AddNewBook' // Adjust the import path as necessary
+import { BooksData, Book, Author } from './type'
 
-interface Author {
-    firstName: string
-    lastName: string
-}
 
-interface Book {
-    id: string
-    title: string
-    author: Author
-    year: number
-}
-
-interface BooksData {
-    [key: string]: Book[]
-}
 
 const BookCatalog = () => {
     const [books, setBooks] = useState<BooksData>(booksData) // All books
@@ -32,34 +19,13 @@ const BookCatalog = () => {
     const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
     const [filterYear, setFilterYear] = useState<number | null>(null) // Currently applied filter year
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target
-        setNewBook(prevState => ({
-            ...prevState,
-            [name]: name === 'year' ? parseInt(value) : value,
-            author: name === 'firstName' || name === 'lastName' ? {
-                ...prevState.author,
-                [name]: value
-            } : prevState.author
-        }))
-    }
-
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault()
-        const newBookId = uuidv4()
-        const firstLetterOfLastName = newBook.author.lastName.charAt(0).toUpperCase()
-        const updatedBooks = {
-            ...books,
-            [firstLetterOfLastName]: [...(books[firstLetterOfLastName] || []), { ...newBook, id: newBookId }]
-        }
-        setBooks(updatedBooks) // Update all books
-        setDisplayedBooks(updatedBooks) // Update displayed books
-        setNewBook({
-            id: '',
-            title: '',
-            author: { firstName: '', lastName: '' },
-            year: new Date().getFullYear()
-        })
+    const handleAddBook = (newBook: { title: string, author: Author, year: number }) => {
+      const id = uuidv4() 
+      const updatedBooks:any = {
+        ...books,
+        [id]: newBook,
+      }
+      setBooks(updatedBooks)
     }
 
     const handleFilterApply = () => {
@@ -85,14 +51,7 @@ const BookCatalog = () => {
 
     return (
         <div className="book-catalog">
-            <form onSubmit={handleSubmit}>
-                <input type="text" name="title" value={newBook.title} onChange={handleChange} placeholder="Title" required />
-                <input type="text" name="firstName" value={newBook.author.firstName} onChange={handleChange} placeholder="Author's First Name" required />
-                <input type="text" name="lastName" value={newBook.author.lastName} onChange={handleChange} placeholder="Author's Last Name" required />
-                <input type="number" name="year" value={newBook.year.toString()} onChange={handleChange} placeholder="Year" required />
-                <button type="submit">Add Book</button>
-            </form>
-
+            <AddNewBook onAddBook={handleAddBook} />
             <YearFilter
                 selectedYear={selectedYear}
                 onYearChange={setSelectedYear}
