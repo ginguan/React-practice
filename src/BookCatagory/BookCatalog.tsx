@@ -1,24 +1,17 @@
 import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import booksData from './bookData.json'
-import YearFilter from './YearFilter' // Import the YearFilter component
-import AddNewBook from './AddNewBook' // Adjust the import path as necessary
+import YearFilter from './YearFilter' 
+import AddNewBook from './AddNewBook' 
 import { BooksData, Book, Author } from './type'
-
-
 
 const BookCatalog = () => {
     const [books, setBooks] = useState<BooksData>(booksData) // All books
     const [displayedBooks, setDisplayedBooks] = useState<BooksData>(booksData) // Books to display, can be filtered
-    // const [newBook, setNewBook] = useState<Book>({
-    //     id: '',
-    //     title: '',
-    //     author: { firstName: '', lastName: '' },
-    //     year: new Date().getFullYear()
-    // })
+
     const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
     const [filterYear, setFilterYear] = useState<number | null>(null) // Currently applied filter year
-    console.log('books', books)
+
     const handleAddBook = (newBook: { title: string, author: Author, year: number }) => {
         const id = uuidv4()
         const letter = newBook.author?.lastName[0].toUpperCase()
@@ -31,7 +24,6 @@ const BookCatalog = () => {
             setDisplayedBooks(updatedBooks)
         }
         else {
-            // books[letter].push({...newBook, id:id})
             const updatedBooks: any = {
                 ...books,
                 [letter]: [...books[letter], { ...newBook, id: id }],

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, FC } from 'react'
+import Stopwatch from './StopWatch'
 
 interface Task {
   id: number
@@ -52,6 +53,7 @@ const TaskList: FC = () => {
   }
 
   return (
+    <div>
     <div className="task-list">
       <h2>Backlog Tasks</h2>
       <form onSubmit={handleSubmit}>
@@ -100,6 +102,8 @@ const TaskList: FC = () => {
           </li>
         ))}
       </ul>
+    </div>
+    <Stopwatch />
     </div>
   )
 }
