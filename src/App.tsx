@@ -4,6 +4,7 @@ import JobBoard from './JobBoard/JobBoard'
 import TaskList from './Task/TaskList'
 import './App.css' 
 import BookCatalog from './BookCatagory/BookCatalog'
+import BlogPosts from './BlogPosts/BlogPost1'
 
 function App() {
   return (
@@ -20,12 +21,16 @@ function App() {
             <li>
               <Link to="/book-cat">Book Catalog</Link>
             </li>
+            <li>
+              <Link to="/blog-post">Blog Post</Link>
+            </li>
           </ul>
         </nav>
         <Routes>
           <Route path="/job-board" element={<JobBoard />} />
           <Route path="/task-list" element={<TaskList />} />
           <Route path="/book-cat" element={<BookCatalog />} />
+          <Route path="/blog-post" element={<BlogPosts />} />
         </Routes>
       </div>
     </Router>
